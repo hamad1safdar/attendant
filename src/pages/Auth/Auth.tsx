@@ -1,26 +1,21 @@
-import InputBase from '@mui/material/InputBase';
-import Button from '@mui/material/Button';
+import Lock from '@mui/icons-material/Lock';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Lock from '@mui/icons-material/Lock';
-import Facebook from '@mui/icons-material/Facebook';
-import Twitter from '@mui/icons-material/Twitter';
-import Google from '@mui/icons-material/Google';
-import LinkedIn from '@mui/icons-material/LinkedIn';
 
-import { type ChangeEvent, useCallback, useState, type FC } from 'react';
+import type { ChangeEvent, FC } from 'react';
+import { useCallback, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useAppSelector } from '../../store';
-import { authenticate } from '../../services/auth';
-import { PinChangeModal } from './PinChangeModal';
+import SocialLogins from './SocialLogins';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
+import PinChangeModal from './PinChangeModal';
+
+import useAuth from './useAuth';
+import useModal from '../../hooks/useModal';
 
 import './styles.css';
-import { updateUsers as updateUsersOnGist } from '../../services/gists';
-import { updateUser } from '../../services/auth';
-import { AuthResult } from '../../types';
 
 const AUTH_TYPES = {
     user: 'user',
@@ -30,34 +25,23 @@ const AUTH_TYPES = {
 const Auth: FC = () => {
     const { type } = useParams();
     const [credentials, setCredentials] = useState({ employeeId: '', pin: '' });
-    const [openPinChangeModal, setOpenPinChangeModal] = useState(false);
-    const [authResult, setResult] = useState<AuthResult | null>(null);
-    const users = useAppSelector((state) => state.users);
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const { mutate } = useMutation({
-        mutationFn: updateUsersOnGist,
-        onSettled: (_data, _error) => {
-            queryClient.invalidateQueries({ queryKey: ['gists/users'] });
-        },
-    });
 
-    const handleChange = useCallback(
-        (event: ChangeEvent<HTMLInputElement>) => {
-            const { name, value } = event.target;
-            setCredentials((prev) => ({ ...prev, [name]: value }));
-        },
-        [setCredentials]
-    );
+    const { isOpen, openModal, closeModal } = useModal();
+    const { handlePinChange, authenticateUserCreds } = useAuth();
 
-    const handleAuthenticate = useCallback(() => {
+    const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setCredentials((prev) => ({ ...prev, [name]: value }));
+    }, []);
+
+    const handleAuthenticate = () => {
         if (!credentials.employeeId || !credentials.pin) {
             alert('Please add required fields');
             return;
         }
-        const result = authenticate(credentials, users);
+        const result = authenticateUserCreds(credentials);
         if (result.success) {
-            setResult(result);
             if (result.loggedInUser?.isDefaultPassword) {
                 openModal();
             } else {
@@ -66,28 +50,15 @@ const Auth: FC = () => {
         } else {
             alert('Invalid employee ID or pin!');
         }
-    }, [credentials, users]);
-
-    const openModal = () => {
-        setOpenPinChangeModal(true);
-    };
-    const closeModal = () => {
-        setOpenPinChangeModal(false);
     };
 
-    const handleSaveClick = (newPin: string) => {
-        const updatedUsers = updateUser(
-            authResult?.loggedInUser?.employeeId!,
-            { pin: newPin, isDefaultPassword: false },
-            users
-        );
-        mutate(updatedUsers);
-    };
+    const handleSaveClick = (newPin: string) =>
+        handlePinChange(credentials.employeeId, newPin);
 
     return (
         <div className="auth-page centered-flex-column">
             <PinChangeModal
-                open={openPinChangeModal}
+                open={isOpen}
                 close={closeModal}
                 onSaveClick={handleSaveClick}
             />
@@ -96,7 +67,7 @@ const Auth: FC = () => {
                     Sign in as {type === AUTH_TYPES.admin ? 'Admin' : 'User'}
                 </h1>
                 <div className="auth-form centered-flex-column">
-                    <StyledTextField
+                    <Input
                         name="employeeId"
                         onChange={handleChange}
                         placeholder="Employee ID"
@@ -107,7 +78,7 @@ const Auth: FC = () => {
                             </InputAdornment>
                         }
                     />
-                    <StyledTextField
+                    <Input
                         name="pin"
                         placeholder="Pin"
                         onChange={handleChange}
@@ -118,27 +89,10 @@ const Auth: FC = () => {
                             </InputAdornment>
                         }
                     />
-                    <StyledButton
-                        variant="contained"
-                        onClick={handleAuthenticate}
-                    >
+                    <Button variant="contained" onClick={handleAuthenticate}>
                         Login
-                    </StyledButton>
-                    <p>Or sign in using social platforms</p>
-                    <SocialPlatformContainer>
-                        <StyledLink to="#">
-                            <Facebook fontSize="large" />
-                        </StyledLink>
-                        <StyledLink to="#">
-                            <Twitter fontSize="large" />
-                        </StyledLink>
-                        <StyledLink to="#">
-                            <Google fontSize="large" />
-                        </StyledLink>
-                        <StyledLink to="#">
-                            <LinkedIn fontSize="large" />
-                        </StyledLink>
-                    </SocialPlatformContainer>
+                    </Button>
+                    <SocialLogins />
                     <div>
                         Or are you{' '}
                         {type === AUTH_TYPES.admin ? 'an admin' : 'a user'}?{' '}
@@ -163,26 +117,7 @@ const Auth: FC = () => {
 
 export default Auth;
 
-const StyledTextField = styled(InputBase)`
-    border-radius: 25px;
-    background-color: #f0f0f0;
-    height: 45px;
-    width: 320px;
-    padding-left: 10px;
-`;
-
-const StyledButton = styled(Button)`
-    width: fit-content;
-    background-color: var(--primary-color);
-
-    :hover {
-        background-color: var(--primary-color);
-    }
-`;
-
 const StyledLink = styled(Link)<{ primary?: boolean }>(({ primary }) => ({
     color: primary ? 'var(--primary-color)' : 'black',
     fontWeight: primary ? 700 : 400,
 }));
-
-const SocialPlatformContainer = styled('div')``;

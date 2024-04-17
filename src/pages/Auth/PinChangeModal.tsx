@@ -1,14 +1,15 @@
+import { useState } from 'react';
+import type { ChangeEvent, FC } from 'react';
 import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Button,
-    InputBase,
     DialogActions,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { type ChangeEvent, type FC, useState } from 'react';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
 
 interface PinChangeModalProps {
     open: boolean;
@@ -16,7 +17,7 @@ interface PinChangeModalProps {
     onSaveClick: (pin: string) => void;
 }
 
-export const PinChangeModal: FC<PinChangeModalProps> = ({
+const PinChangeModal: FC<PinChangeModalProps> = ({
     open,
     close,
     onSaveClick,
@@ -51,13 +52,13 @@ export const PinChangeModal: FC<PinChangeModalProps> = ({
             <DialogTitle>Change password for your account</DialogTitle>
             <DialogContent>
                 <Container>
-                    <StyledTextField
+                    <Input
                         value={values.pin}
                         name="pin"
                         placeholder="New pin"
                         onChange={handleChange}
                     />
-                    <StyledTextField
+                    <Input
                         name="confirmPin"
                         placeholder="Confirm pin"
                         value={values.confirmPin}
@@ -66,32 +67,16 @@ export const PinChangeModal: FC<PinChangeModalProps> = ({
                 </Container>
             </DialogContent>
             <DialogActions>
-                <StyledButton onClick={handleSaveClick}>Save</StyledButton>
+                <Button onClick={handleSaveClick}>Save</Button>
             </DialogActions>
         </Dialog>
     );
 };
 
-const StyledTextField = styled(InputBase)`
-    border-radius: 25px;
-    background-color: #f0f0f0;
-    height: 45px;
-    width: 320px;
-    padding-left: 10px;
-`;
+export default PinChangeModal;
 
 const Container = styled('div')`
     display: flex;
     flex-direction: column;
     gap: 10px;
-`;
-
-const StyledButton = styled(Button)`
-    width: fit-content;
-    background-color: var(--primary-color);
-    color: white;
-
-    :hover {
-        background-color: var(--primary-color);
-    }
 `;
