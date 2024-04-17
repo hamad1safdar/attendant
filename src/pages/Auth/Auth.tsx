@@ -8,11 +8,19 @@ import Twitter from '@mui/icons-material/Twitter';
 import Google from '@mui/icons-material/Google';
 import LinkedIn from '@mui/icons-material/LinkedIn';
 
-import type { FC } from 'react';
+import { type ChangeEvent, useCallback, useState, type FC } from 'react';
 import { styled } from '@mui/material/styles';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { useAppSelector } from '../../store';
+import { authenticate } from '../../services/auth';
+import { PinChangeModal } from './PinChangeModal';
 
 import './styles.css';
+import { updateUsers as updateUsersOnGist } from '../../services/gists';
+import { updateUser } from '../../services/auth';
+import { AuthResult } from '../../types';
 
 const AUTH_TYPES = {
     user: 'user',
@@ -21,15 +29,78 @@ const AUTH_TYPES = {
 
 const Auth: FC = () => {
     const { type } = useParams();
+    const [credentials, setCredentials] = useState({ employeeId: '', pin: '' });
+    const [openPinChangeModal, setOpenPinChangeModal] = useState(false);
+    const [authResult, setResult] = useState<AuthResult | null>(null);
+    const users = useAppSelector((state) => state.users);
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+    const { mutate } = useMutation({
+        mutationFn: updateUsersOnGist,
+        onSettled: (_data, _error) => {
+            queryClient.invalidateQueries({ queryKey: ['gists/users'] });
+        },
+    });
+
+    const handleChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            const { name, value } = event.target;
+            setCredentials((prev) => ({ ...prev, [name]: value }));
+        },
+        [setCredentials]
+    );
+
+    const handleAuthenticate = useCallback(() => {
+        if (!credentials.employeeId || !credentials.pin) {
+            alert('Please add required fields');
+            return;
+        }
+        const result = authenticate(credentials, users);
+        if (result.success) {
+            setResult(result);
+            if (result.loggedInUser?.isDefaultPassword) {
+                openModal();
+            } else {
+                navigate('/', { replace: true });
+            }
+        } else {
+            alert('Invalid employee ID or pin!');
+        }
+    }, [credentials, users]);
+
+    const openModal = () => {
+        setOpenPinChangeModal(true);
+    };
+    const closeModal = () => {
+        setOpenPinChangeModal(false);
+    };
+
+    const handleSaveClick = (newPin: string) => {
+        const updatedUsers = updateUser(
+            authResult?.loggedInUser?.employeeId!,
+            { pin: newPin, isDefaultPassword: false },
+            users
+        );
+        mutate(updatedUsers);
+    };
+
     return (
         <div className="auth-page centered-flex-column">
+            <PinChangeModal
+                open={openPinChangeModal}
+                close={closeModal}
+                onSaveClick={handleSaveClick}
+            />
             <div className="auth-container centered-flex-column ">
                 <h1 className="page-title">
                     Sign in as {type === AUTH_TYPES.admin ? 'Admin' : 'User'}
                 </h1>
                 <div className="auth-form centered-flex-column">
                     <StyledTextField
+                        name="employeeId"
+                        onChange={handleChange}
                         placeholder="Employee ID"
+                        value={credentials.employeeId}
                         startAdornment={
                             <InputAdornment position="start">
                                 <AccountCircle htmlColor="#01bfa6" />
@@ -37,14 +108,22 @@ const Auth: FC = () => {
                         }
                     />
                     <StyledTextField
+                        name="pin"
                         placeholder="Pin"
+                        onChange={handleChange}
+                        value={credentials.pin}
                         startAdornment={
                             <InputAdornment position="start">
                                 <Lock htmlColor="#01bfa6" />
                             </InputAdornment>
                         }
                     />
-                    <StyledButton variant="contained">Login</StyledButton>
+                    <StyledButton
+                        variant="contained"
+                        onClick={handleAuthenticate}
+                    >
+                        Login
+                    </StyledButton>
                     <p>Or sign in using social platforms</p>
                     <SocialPlatformContainer>
                         <StyledLink to="#">
