@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { authenticate } from '../../services/auth';
 import { updateUsers as updateUsersOnGist } from '../../services/gists';
-import { updateUser as updateUserById } from '../../services/auth';
+import { updateUser as updateUserById } from '../../services/users';
 import { login } from '../../store/auth.slice';
 import type {
     AuthResult,

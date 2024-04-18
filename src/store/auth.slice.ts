@@ -16,13 +16,13 @@ const slice = createSlice({
     initialState,
     reducers: {
         login(state, action: PayloadAction<AuthState>) {
-            state = action.payload;
+            return { ...state, ...action.payload };
         },
-        logout(state) {
-            state = initialState;
+        logout() {
+            return initialState;
         },
         loginAsAdmin(state, action: PayloadAction<AuthState>) {
-            state = action.payload;
+            return { ...state, ...action.payload };
         },
     },
 });

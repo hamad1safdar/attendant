@@ -7,6 +7,8 @@ const GIST_ENDPOINT = 'https://api.github.com/gists';
 
 const USER_GIST_ID = 'ed8789dac7cc871da7e3b421902bcd79';
 const USER_GIST_NAME = 'users.json';
+const RECORDS_GIST_ID = '447fd59bfed3518a058eef08d9dae3a3';
+const RECORDS_GIST_NAME = 'records.json';
 
 export const getUsers = async () => {
     const response = await getGistById(USER_GIST_ID);
@@ -25,6 +27,15 @@ export const updateUsers = async (newUsers: Array<User>) => {
     };
     await updateGistById(USER_GIST_ID, newGist);
 };
+
+export const getRecords = async () => {
+    const response = await getGistById(RECORDS_GIST_ID);
+    return JSON.parse(
+        (response.data.files as GistFile)[RECORDS_GIST_NAME].content
+    );
+};
+
+//GIST Common API
 
 const getGistById = (gistId: string) => {
     return axios.get(`${GIST_ENDPOINT}/${gistId}`, {

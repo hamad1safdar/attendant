@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
+import * as userService from '../services/users';
 import type { EmployeeId, User, UpdateUserPayload } from '../types';
 
 const initialState: Array<User> = [];
@@ -13,9 +14,7 @@ const slice = createSlice({
             return action.payload;
         },
         deleteUser(state, action: PayloadAction<EmployeeId>) {
-            state = state.filter(
-                (employee) => employee.emplyeeId != action.payload
-            );
+            return userService.deleteUser(action.payload, state);
         },
         updateUser(state, action: PayloadAction<UpdateUserPayload>) {
             let foundUser = state.find(
@@ -26,7 +25,7 @@ const slice = createSlice({
             }
         },
         addUser(state, action: PayloadAction<User>) {
-            state.push(action.payload);
+            return userService.addUser(action.payload, state);
         },
     },
 });
