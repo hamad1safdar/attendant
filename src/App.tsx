@@ -1,19 +1,35 @@
-import { Provider } from 'react-redux';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useEffect, type FC } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
-import store from './store';
+import Auth from './pages/Auth';
+
+import { useAppDispatch } from './store';
+import { getUsers } from './services/gists';
+import { setUsers } from './store/user.slice';
 
 import './App.css';
 
+const NotFound: FC = () => <div>Not Found</div>;
+
 function App() {
+    const dispatch = useAppDispatch();
+    const { data } = useQuery({
+        queryKey: ['gists/users'],
+        queryFn: () => getUsers(),
+    });
+
+    useEffect(() => {
+        if (data) {
+            dispatch(setUsers(data));
+        }
+    }, [data]);
+
     return (
-        <Provider store={store}>
-            <BrowserRouter>
-                <Routes>
-                    <Route></Route>
-                </Routes>
-            </BrowserRouter>
-        </Provider>
+        <Routes>
+            <Route path="/auth/:type" element={<Auth />} />
+            <Route path="*" element={<NotFound />} />
+        </Routes>
     );
 }
 
