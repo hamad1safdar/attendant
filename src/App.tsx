@@ -4,28 +4,28 @@ import { useQuery } from '@tanstack/react-query';
 
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
+import AdminSettings from './pages/AdminSettings';
 
 import { useAppDispatch } from './store';
 import { getUsers } from './services/gists';
 import { setUsers } from './store/user.slice';
 
 import './App.css';
-import AdminSettings from './pages/AdminSettings';
 
 const NotFound: FC = () => <div>Not Found</div>;
 
 function App() {
     const dispatch = useAppDispatch();
-    const { data } = useQuery({
+    const { data: usersData } = useQuery({
         queryKey: ['gists/users'],
         queryFn: () => getUsers(),
     });
 
     useEffect(() => {
-        if (data) {
-            dispatch(setUsers(data));
+        if (usersData) {
+            dispatch(setUsers(usersData));
         }
-    }, [data]);
+    }, [usersData]);
 
     return (
         <Routes>

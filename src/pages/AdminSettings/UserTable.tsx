@@ -1,11 +1,14 @@
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
+import { useAppSelector } from '../../store';
+
 interface GridColumDef {
     field: string;
     headerName: string;
     width?: number;
     editable?: boolean;
     renderCell?: any;
+    headerClassName: string;
 }
 
 const columns: Array<GridColumDef> = [
@@ -13,87 +16,31 @@ const columns: Array<GridColumDef> = [
     { field: 'firstName', headerName: 'First name' },
     { field: 'lastName', headerName: 'Last name' },
     { field: 'email', headerName: 'Email', width: 250 },
-    { field: 'department', headerName: 'Department' },
-    { field: 'position', headerName: 'Postion' },
-];
-const rows = [
-    {
-        emplyeeId: 'SE-000',
-        firstName: 'Hamad',
-        lastName: 'Safdar',
-        email: 'hamad.safdar@emumba.com',
-        pin: '1111',
-        role: 'admin',
-        department: 'Software Engineering',
-        position: 'Frontend Engineer',
-        hoursWorked: 0,
-        joiningDate: '',
-        isDefaultPassword: true,
-    },
-    {
-        emplyeeId: 'SE-001',
-        firstName: 'Hamad',
-        lastName: 'Safdar',
-        email: 'hamad.safdar@emumba.com',
-        pin: '1111',
-        role: 'admin',
-        department: 'Software Engineering',
-        position: 'Frontend Engineer',
-        hoursWorked: 0,
-        joiningDate: '',
-        isDefaultPassword: true,
-    },
-    {
-        emplyeeId: 'SE-002',
-        firstName: 'Hamad',
-        lastName: 'Safdar',
-        email: 'hamad.safdar@emumba.com',
-        pin: '1111',
-        role: 'admin',
-        department: 'Software Engineering',
-        position: 'Frontend Engineer',
-        hoursWorked: 0,
-        joiningDate: '',
-        isDefaultPassword: true,
-    },
-    {
-        emplyeeId: 'SE-003',
-        firstName: 'Hamad',
-        lastName: 'Safdar',
-        email: 'hamad.safdar@emumba.com',
-        pin: '1111',
-        role: 'admin',
-        department: 'Software Engineering',
-        position: 'Frontend Engineer',
-        hoursWorked: 0,
-        joiningDate: '',
-        isDefaultPassword: true,
-    },
-];
+    { field: 'department', headerName: 'Department', width: 200 },
+    { field: 'position', headerName: 'Postion', width: 200 },
+].map((d) => ({ ...d, headerClassName: 'datagrid-header' }));
 
 const DataTable = () => {
+    const users = useAppSelector((state) => state.users);
     return (
-        <div style={{ width: '1000px', margin: '0 auto' }}>
-            <DataGrid
-                disableRowSelectionOnClick
-                onRowClick={(row) => console.log(row)}
-                getRowId={(row) => row.emplyeeId}
-                hideFooter
-                columns={columns}
-                rows={rows}
-                disableColumnFilter
-                disableColumnSelector
-                disableDensitySelector
-                slots={{ toolbar: GridToolbar }}
-                slotProps={{
-                    toolbar: {
-                        showQuickFilter: true,
-                        printOptions: { disableToolbarButton: true },
-                        csvOptions: { disableToolbarButton: true },
-                    },
-                }}
-            ></DataGrid>
-        </div>
+        <DataGrid
+            disableRowSelectionOnClick
+            getRowId={(row) => row.emplyeeId}
+            getRowClassName={() => 'datagrid-row'}
+            columns={columns}
+            rows={users}
+            disableColumnFilter
+            disableColumnSelector
+            disableDensitySelector
+            slots={{ toolbar: GridToolbar }}
+            slotProps={{
+                toolbar: {
+                    showQuickFilter: true,
+                    printOptions: { disableToolbarButton: true },
+                    csvOptions: { disableToolbarButton: true },
+                },
+            }}
+        />
     );
 };
 export default DataTable;

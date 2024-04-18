@@ -21,14 +21,16 @@ const Dashboard: FC = () => {
         return;
     }
 
+    const handleSettingsClick = () => {
+        navigate('/admin/settings');
+    };
+
     return (
         <div className="dashboard-page centered-flex-column">
             {currentUser.role === 'admin' && (
                 <div
                     role="button"
-                    onClick={() => {
-                        alert('Go to settings!');
-                    }}
+                    onClick={handleSettingsClick}
                     className="settings"
                 >
                     <SettingIcon fontSize="inherit" />

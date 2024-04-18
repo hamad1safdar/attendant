@@ -1,7 +1,37 @@
+.settings-page {
+    gap: 20px;
+    padding: 35px 0 25px 0;
+}
+
+.page-title {
+    color: var(--primary-color);
+}
+
+.table-container {
+    width: 50%;
+}
+
 .form {
     text-align: center;
+    margin: 35px 0;
+    border: 2px solid var(--gray);
+    padding: 30px 60px;
+    border-radius: 8px;
 }
 
 .inline-form {
-    gap: 10px;
+    gap: 15px;
+}
+
+.datagrid-row {
+    background: var(--secondary-color);
+}
+
+.datagrid-header {
+    background-color: var(--primary-color);
+}
+
+.MuiDataGrid-toolbarContainer,
+.MuiDataGrid-footerContainer {
+    background-color: var(--gray);
 }

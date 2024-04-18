@@ -51,3 +51,18 @@ export interface GistFile {
 export interface GistContent {
     content: string;
 }
+
+export interface HelperData {
+    lastKey: {
+        Engineering: string;
+        Marketing: string;
+    };
+    departments: {
+        Engineering: string;
+        Marketing: string;
+    };
+    positions: {
+        Engineering: Array<string>;
+        Marketing: Array<string>;
+    };
+}

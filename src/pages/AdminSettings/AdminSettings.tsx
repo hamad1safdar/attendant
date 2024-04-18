@@ -1,4 +1,3 @@
-import CompanyHoursForm from './CompanyHoursForm';
 import AddUserForm from './UserAddForm';
 import DataTable from './UserTable';
 
@@ -6,12 +5,13 @@ import './styles.css';
 
 const AdminSettings = () => {
     return (
-        <>
-            <h1>Settings</h1>
-            <DataTable />
-            <CompanyHoursForm />
+        <div className="settings-page centered-flex-column">
+            <h1 className="page-title">Admin Settings</h1>
             <AddUserForm />
-        </>
+            <div className="table-container">
+                <DataTable />
+            </div>
+        </div>
     );
 };
 
