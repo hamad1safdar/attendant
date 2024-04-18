@@ -2,10 +2,10 @@ import Lock from '@mui/icons-material/Lock';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
+import { Link } from 'react-router-dom';
 import type { ChangeEvent, FC } from 'react';
 import { useCallback, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import SocialLogins from './SocialLogins';
 import Input from '../../components/Input';
@@ -17,18 +17,17 @@ import useModal from '../../hooks/useModal';
 
 import './styles.css';
 
-const AUTH_TYPES = {
+const AUTH_ROLES = {
     user: 'user',
     admin: 'admin',
 };
 
 const Auth: FC = () => {
-    const { type } = useParams();
     const [credentials, setCredentials] = useState({ employeeId: '', pin: '' });
-    const navigate = useNavigate();
 
     const { isOpen, openModal, closeModal } = useModal();
-    const { handlePinChange, authenticateUserCreds } = useAuth();
+    const { authRole, handlePinChange, authenticateUserCreds, onAuthSuccess } =
+        useAuth();
 
     const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -45,7 +44,7 @@ const Auth: FC = () => {
             if (result.loggedInUser?.isDefaultPassword) {
                 openModal();
             } else {
-                navigate('/', { replace: true });
+                onAuthSuccess(result.loggedInUser!);
             }
         } else {
             alert('Invalid employee ID or pin!');
@@ -64,7 +63,8 @@ const Auth: FC = () => {
             />
             <div className="auth-container centered-flex-column ">
                 <h1 className="page-title">
-                    Sign in as {type === AUTH_TYPES.admin ? 'Admin' : 'User'}
+                    Sign in as{' '}
+                    {authRole === AUTH_ROLES.admin ? 'Admin' : 'User'}
                 </h1>
                 <div className="auth-form centered-flex-column">
                     <Input
@@ -93,19 +93,20 @@ const Auth: FC = () => {
                         Login
                     </Button>
                     <SocialLogins />
+                    {/**TODO: Refactor this conditional to a new condition component */}
                     <div>
                         Or are you{' '}
-                        {type === AUTH_TYPES.admin ? 'an admin' : 'a user'}?{' '}
+                        {authRole === AUTH_ROLES.admin ? 'an admin' : 'a user'}?{' '}
                         <StyledLink
                             primary
                             to={
-                                type === AUTH_TYPES.admin
+                                authRole === AUTH_ROLES.admin
                                     ? '/auth/user'
                                     : '/auth/admin'
                             }
                         >
                             Signin as{' '}
-                            {type === AUTH_TYPES.admin ? 'user' : 'admin'}{' '}
+                            {authRole === AUTH_ROLES.admin ? 'user' : 'admin'}{' '}
                             instead?
                         </StyledLink>
                     </div>
