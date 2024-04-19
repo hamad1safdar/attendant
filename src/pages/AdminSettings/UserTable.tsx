@@ -21,7 +21,7 @@ const columns: Array<GridColumDef> = [
 ].map((d) => ({ ...d, headerClassName: 'datagrid-header' }));
 
 const DataTable = () => {
-    const users = useAppSelector((state) => state.users);
+    const { users } = useAppSelector((state) => state.users);
     return (
         <DataGrid
             disableRowSelectionOnClick

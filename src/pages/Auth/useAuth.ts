@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { authenticate } from '../../services/auth';
 import { updateUsers as updateUsersOnGist } from '../../services/gists';
 import { updateUser as updateUserById } from '../../services/users';
-import { login } from '../../store/auth.slice';
+import { login } from '../../store/user.slice';
 import type {
     AuthResult,
     AuthState,
@@ -17,7 +17,7 @@ import type {
 
 const useAuth = () => {
     const { type } = useParams();
-    const users = useAppSelector((state) => state.users);
+    const { users } = useAppSelector((state) => state.users);
     const queryClient = useQueryClient();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -56,7 +56,7 @@ const useAuth = () => {
     );
 
     const onAuthSuccess = (loggedInUser: AuthState) => {
-        dispatch(login(loggedInUser));
+        dispatch(login(loggedInUser.employeeId!));
         let navigateTo = '/dashboard';
         if (type === 'user') {
             navigateTo += '/user';

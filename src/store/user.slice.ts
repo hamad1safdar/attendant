@@ -2,22 +2,34 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 import * as userService from '../services/users';
-import type { EmployeeId, User, UpdateUserPayload } from '../types';
+import type { EmployeeId, User, UpdateUserPayload, UserState } from '../types';
 
-const initialState: Array<User> = [];
+const initialState: UserState = {
+    currentUser: null,
+    users: [],
+};
 
 const slice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        setUsers(_state, action: PayloadAction<Array<User>>) {
-            return action.payload;
+        login(state, action: PayloadAction<EmployeeId>) {
+            const index = state.users.findIndex(
+                (user) => user.emplyeeId === action.payload
+            );
+            state.currentUser = index >= 0 ? state.users[index] : null;
+        },
+        logout(state) {
+            state.currentUser = null;
+        },
+        setUsers(state, action: PayloadAction<Array<User>>) {
+            state.users = action.payload;
         },
         deleteUser(state, action: PayloadAction<EmployeeId>) {
-            return userService.deleteUser(action.payload, state);
+            state.users = userService.deleteUser(action.payload, state.users);
         },
         updateUser(state, action: PayloadAction<UpdateUserPayload>) {
-            let foundUser = state.find(
+            let foundUser = state.users.find(
                 (employee) => employee.emplyeeId === action.payload.employeeId
             );
             if (foundUser) {
@@ -25,10 +37,11 @@ const slice = createSlice({
             }
         },
         addUser(state, action: PayloadAction<User>) {
-            return userService.addUser(action.payload, state);
+            state.users = userService.addUser(action.payload, state.users);
         },
     },
 });
 
-export const { setUsers, deleteUser, updateUser } = slice.actions;
+export const { setUsers, deleteUser, updateUser, login, logout } =
+    slice.actions;
 export default slice.reducer;

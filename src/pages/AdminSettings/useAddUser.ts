@@ -19,7 +19,7 @@ const initialState = {
 
 export default function useAddUser() {
     const [values, setValues] = useState(initialState);
-    const users = useAppSelector((state) => state.users);
+    const { users } = useAppSelector((state) => state.users);
     const queryClient = useQueryClient();
 
     const { mutate: syncWithGist, isPending } = useMutation({

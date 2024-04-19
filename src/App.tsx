@@ -1,5 +1,5 @@
 import { useEffect, type FC } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import Auth from './pages/Auth';
@@ -32,6 +32,7 @@ function App() {
             <Route path="/auth/:type" element={<Auth />} />
             <Route path="/dashboard/:role" element={<Dashboard />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="*" element={<Navigate to={'/auth/user'} />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

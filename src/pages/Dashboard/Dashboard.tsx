@@ -2,21 +2,21 @@ import Avatar from '@mui/material/Avatar';
 import SettingIcon from '@mui/icons-material/Settings';
 
 import { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useAppSelector } from '../../store';
 
 import './styles.css';
 import AccountActions from './AccountActions';
-import { useNavigate } from 'react-router-dom';
 
 const Dashboard: FC = () => {
     const navigate = useNavigate();
     //check is admin or user
     //check loggedin or not
 
-    const currentUser = useAppSelector((state) => state.auth);
+    const { currentUser } = useAppSelector((state) => state.users);
 
-    if (!currentUser.loggedIn) {
+    if (!currentUser) {
         navigate('/auth/user');
         return;
     }

@@ -66,3 +66,8 @@ export interface HelperData {
         Marketing: Array<string>;
     };
 }
+
+export interface UserState {
+    currentUser: User | null;
+    users: Array<User>;
+}
