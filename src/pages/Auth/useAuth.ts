@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../../store';
 import { authenticate } from '../../services/auth';
@@ -16,7 +16,6 @@ import type {
 } from '../../types';
 
 const useAuth = () => {
-    const { type } = useParams();
     const { users } = useAppSelector((state) => state.users);
     const queryClient = useQueryClient();
     const dispatch = useAppDispatch();
@@ -57,23 +56,13 @@ const useAuth = () => {
 
     const onAuthSuccess = (loggedInUser: AuthState) => {
         dispatch(login(loggedInUser.employeeId!));
-        let navigateTo = '/dashboard';
-        if (type === 'user') {
-            navigateTo += '/user';
-        }
-        if (type === 'admin') {
-            if (loggedInUser.role === 'admin') {
-                navigateTo += '/admin';
-            } else navigateTo += '/user';
-        }
-        navigate(navigateTo);
+        navigate('/dashboard');
     };
 
     return {
         authenticateUserCreds,
         handlePinChange,
         onAuthSuccess,
-        authRole: type,
     };
 };
 

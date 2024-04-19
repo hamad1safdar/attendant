@@ -1,41 +1,27 @@
 import Avatar from '@mui/material/Avatar';
-import SettingIcon from '@mui/icons-material/Settings';
 
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import AccountActions from './AccountActions';
+import AdminSettings from './AdminSettings';
+
 import { useAppSelector } from '../../store';
 
 import './styles.css';
-import AccountActions from './AccountActions';
 
 const Dashboard: FC = () => {
     const navigate = useNavigate();
-    //check is admin or user
-    //check loggedin or not
 
     const { currentUser } = useAppSelector((state) => state.users);
 
     if (!currentUser) {
-        navigate('/auth/user');
+        navigate('/');
         return;
     }
 
-    const handleSettingsClick = () => {
-        navigate('/admin/settings');
-    };
-
     return (
         <div className="dashboard-page centered-flex-column">
-            {currentUser.role === 'admin' && (
-                <div
-                    role="button"
-                    onClick={handleSettingsClick}
-                    className="settings"
-                >
-                    <SettingIcon fontSize="inherit" />
-                </div>
-            )}
             <div className="user-info">
                 <Avatar
                     sx={{
@@ -49,7 +35,8 @@ const Dashboard: FC = () => {
                     Hi, {currentUser.firstName + ' ' + currentUser.lastName}
                 </p>
             </div>
-            <AccountActions role={'admin'} />
+            {currentUser.role === 'admin' && <AdminSettings />}
+            {currentUser.role === 'user' && <AccountActions role={'user'} />}
         </div>
     );
 };

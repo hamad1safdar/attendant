@@ -5,7 +5,7 @@ import './styles.css';
 
 const AdminSettings = () => {
     return (
-        <div className="settings-page centered-flex-column">
+        <div className="centered-flex-column">
             <h1 className="page-title">Admin Settings</h1>
             <AddUserForm />
             <div className="table-container">

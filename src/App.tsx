@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
-import AdminSettings from './pages/AdminSettings';
 
 import { useAppDispatch } from './store';
 import { getUsers } from './services/gists';
@@ -29,9 +28,8 @@ function App() {
 
     return (
         <Routes>
-            <Route path="/auth/:type" element={<Auth />} />
-            <Route path="/dashboard/:role" element={<Dashboard />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<Navigate to={'/auth/user'} />} />
             <Route path="*" element={<NotFound />} />
         </Routes>

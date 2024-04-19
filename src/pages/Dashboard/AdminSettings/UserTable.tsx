@@ -1,6 +1,6 @@
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
-import { useAppSelector } from '../../store';
+import { useAppSelector } from '../../../store';
 
 interface GridColumDef {
     field: string;

@@ -3,9 +3,9 @@ import Select from '@mui/material/Select';
 
 import { MenuItem } from '@mui/material';
 
-import Input from '../../components/Input';
-import Button from '../../components/Button';
-import Loader from '../../components/Loader';
+import Input from '../../../components/Input';
+import Button from '../../../components/Button';
+import Loader from '../../../components/Loader';
 import useAddUser from './useAddUser';
 
 import { DEPARTMENTS, POSITIONS } from './utils';

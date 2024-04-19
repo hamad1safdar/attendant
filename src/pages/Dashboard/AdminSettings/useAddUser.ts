@@ -2,11 +2,11 @@ import { useState, ChangeEvent } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
-import { useAppSelector } from '../../store';
-import { updateUsers as updateUsersGist } from '../../services/gists';
+import { useAppSelector } from '../../../store';
+import { updateUsers as updateUsersGist } from '../../../services/gists';
 
-import { addUser } from '../../services/users';
-import { generateEmployeeID, getLastEntryByNumber } from '../../helper';
+import { addUser } from '../../../services/users';
+import { generateEmployeeID, getLastEntryByNumber } from '../../../helper';
 import { DEPARTMENTS, POSITIONS, PREFIXES, getUserDefaults } from './utils';
 
 const initialState = {

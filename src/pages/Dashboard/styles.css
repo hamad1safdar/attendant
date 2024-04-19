@@ -1,8 +1,7 @@
 .dashboard-page {
     width: 100%;
-    height: 100vh;
     gap: 35px;
-    position: relative;
+    padding: 35px 0px;
 }
 
 .user-info {
