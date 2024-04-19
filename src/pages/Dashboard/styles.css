@@ -8,6 +8,13 @@
     width: fit-content;
     text-align: center;
     margin: 0 auto;
+    position: relative;
+}
+
+.logout {
+    position: absolute;
+    top: 50px;
+    right: 70px;
 }
 
 .greetings {

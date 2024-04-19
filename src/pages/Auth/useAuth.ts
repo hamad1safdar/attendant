@@ -16,7 +16,7 @@ import type {
 } from '../../types';
 
 const useAuth = () => {
-    const { users } = useAppSelector((state) => state.users);
+    const { users, currentUser } = useAppSelector((state) => state.users);
     const queryClient = useQueryClient();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -58,6 +58,10 @@ const useAuth = () => {
         dispatch(login(loggedInUser.employeeId!));
         navigate('/dashboard');
     };
+
+    if (currentUser) {
+        navigate('/dashboard');
+    }
 
     return {
         authenticateUserCreds,

@@ -30,7 +30,7 @@ function App() {
         <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<Navigate to={'/auth/user'} />} />
+            <Route path="*" element={<Navigate to={'/auth'} />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

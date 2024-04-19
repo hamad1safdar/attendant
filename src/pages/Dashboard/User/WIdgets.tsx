@@ -1,9 +1,5 @@
 import { FC } from 'react';
 
-interface AccountActionsProps {
-    role: 'admin' | 'user';
-}
-
 interface ActionProps {
     label: string;
     onClick: () => void;
@@ -21,15 +17,6 @@ const Action: FC<ActionProps> = ({ label, onClick }) => {
     );
 };
 
-const AdminActions = () => {
-    return (
-        <>
-            <Action label="Today's Availiblity" onClick={() => {}} />
-            <Action label="Overall Stats" onClick={() => {}} />
-        </>
-    );
-};
-
 const UserActions = () => {
     return (
         <>
@@ -40,10 +27,10 @@ const UserActions = () => {
     );
 };
 
-const AccountActions: FC<AccountActionsProps> = ({ role }) => {
+const AccountActions: FC = () => {
     return (
         <div className="action-container centered-flex">
-            {role === 'admin' ? <AdminActions /> : <UserActions />}
+            <UserActions />
         </div>
     );
 };

@@ -3,15 +3,18 @@ import Avatar from '@mui/material/Avatar';
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import AccountActions from './AccountActions';
+import AccountActions from './User/WIdgets';
 import AdminSettings from './AdminSettings';
+import Button from '../../components/Button';
 
-import { useAppSelector } from '../../store';
+import { useAppDispatch, useAppSelector } from '../../store';
 
 import './styles.css';
+import { logout } from '../../store/user.slice';
 
 const Dashboard: FC = () => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const { currentUser } = useAppSelector((state) => state.users);
 
@@ -20,8 +23,15 @@ const Dashboard: FC = () => {
         return;
     }
 
+    const handleLogout = () => {
+        dispatch(logout());
+    };
+
     return (
         <div className="dashboard-page centered-flex-column">
+            <div className="logout">
+                <Button onClick={handleLogout}>Logout</Button>
+            </div>
             <div className="user-info">
                 <Avatar
                     sx={{
@@ -36,7 +46,7 @@ const Dashboard: FC = () => {
                 </p>
             </div>
             {currentUser.role === 'admin' && <AdminSettings />}
-            {currentUser.role === 'user' && <AccountActions role={'user'} />}
+            {currentUser.role === 'user' && <AccountActions />}
         </div>
     );
 };
