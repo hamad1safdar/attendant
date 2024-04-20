@@ -1,0 +1,52 @@
+.dashboard-page {
+    width: 100%;
+    gap: 35px;
+    padding: 35px 0px;
+    min-height: 100vh;
+}
+
+.user-info {
+    width: fit-content;
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.logout {
+    position: absolute;
+    top: 50px;
+    right: 70px;
+}
+
+.greetings {
+    font-weight: 600;
+    font-size: 24px;
+    color: var(--primary-color);
+}
+
+.action-container {
+    gap: 25px;
+}
+
+.action-btn {
+    width: 300px;
+    height: 150px;
+    background-color: var(--primary-color);
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 1px 1px 10px var(--gray);
+    }
+}
+
+.settings {
+    width: fit-content;
+    position: absolute;
+    top: 70px;
+    right: 70px;
+    color: var(--primary-color);
+    font-size: 36px;
+}

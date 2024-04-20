@@ -1,4 +1,4 @@
-import type { AuthResult, EmployeeId, LoginCredentials, User } from '../types';
+import type { AuthResult, LoginCredentials, User } from '../types';
 
 export const authenticate = (
     creds: LoginCredentials,
@@ -31,20 +31,4 @@ export const authenticate = (
     }
 
     return result;
-};
-
-export const updateUser = (
-    employeeId: EmployeeId,
-    updatedUserAttributes: Partial<User>,
-    users: Array<User>
-): Array<User> => {
-    const index = users.findIndex((user) => user.emplyeeId === employeeId);
-    if (index < 0) {
-        return users;
-    }
-
-    return [
-        { ...users[index], ...updatedUserAttributes },
-        ...users.filter((user) => user.emplyeeId !== employeeId),
-    ];
 };

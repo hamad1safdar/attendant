@@ -4,8 +4,6 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 
 import type { ChangeEvent, FC } from 'react';
 import { useCallback, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import SocialLogins from './SocialLogins';
 import Input from '../../components/Input';
@@ -17,18 +15,11 @@ import useModal from '../../hooks/useModal';
 
 import './styles.css';
 
-const AUTH_TYPES = {
-    user: 'user',
-    admin: 'admin',
-};
-
 const Auth: FC = () => {
-    const { type } = useParams();
     const [credentials, setCredentials] = useState({ employeeId: '', pin: '' });
-    const navigate = useNavigate();
 
     const { isOpen, openModal, closeModal } = useModal();
-    const { handlePinChange, authenticateUserCreds } = useAuth();
+    const { handlePinChange, authenticateUserCreds, onAuthSuccess } = useAuth();
 
     const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -45,7 +36,7 @@ const Auth: FC = () => {
             if (result.loggedInUser?.isDefaultPassword) {
                 openModal();
             } else {
-                navigate('/', { replace: true });
+                onAuthSuccess(result.loggedInUser!);
             }
         } else {
             alert('Invalid employee ID or pin!');
@@ -63,9 +54,7 @@ const Auth: FC = () => {
                 onSaveClick={handleSaveClick}
             />
             <div className="auth-container centered-flex-column ">
-                <h1 className="page-title">
-                    Sign in as {type === AUTH_TYPES.admin ? 'Admin' : 'User'}
-                </h1>
+                <h1 className="page-title">Sign in</h1>
                 <div className="auth-form centered-flex-column">
                     <Input
                         name="employeeId"
@@ -81,8 +70,12 @@ const Auth: FC = () => {
                     <Input
                         name="pin"
                         placeholder="Pin"
+                        type="password"
                         onChange={handleChange}
                         value={credentials.pin}
+                        inputProps={{
+                            maxLength: 4,
+                        }}
                         startAdornment={
                             <InputAdornment position="start">
                                 <Lock htmlColor="#01bfa6" />
@@ -93,22 +86,6 @@ const Auth: FC = () => {
                         Login
                     </Button>
                     <SocialLogins />
-                    <div>
-                        Or are you{' '}
-                        {type === AUTH_TYPES.admin ? 'an admin' : 'a user'}?{' '}
-                        <StyledLink
-                            primary
-                            to={
-                                type === AUTH_TYPES.admin
-                                    ? '/auth/user'
-                                    : '/auth/admin'
-                            }
-                        >
-                            Signin as{' '}
-                            {type === AUTH_TYPES.admin ? 'user' : 'admin'}{' '}
-                            instead?
-                        </StyledLink>
-                    </div>
                 </div>
             </div>
         </div>
@@ -116,8 +93,3 @@ const Auth: FC = () => {
 };
 
 export default Auth;
-
-const StyledLink = styled(Link)<{ primary?: boolean }>(({ primary }) => ({
-    color: primary ? 'var(--primary-color)' : 'black',
-    fontWeight: primary ? 700 : 400,
-}));

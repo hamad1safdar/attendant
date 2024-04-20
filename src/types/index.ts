@@ -24,6 +24,7 @@ export interface User {
     hoursWorked: number;
     joiningDate: string;
     isDefaultPassword: boolean;
+    record: Array<AttendanceRecord>;
 }
 
 export type EmployeeId = string;
@@ -50,4 +51,16 @@ export interface GistFile {
 
 export interface GistContent {
     content: string;
+}
+
+export interface UserState {
+    currentUser: User | null;
+    users: Array<User>;
+}
+
+export interface AttendanceRecord {
+    date: string;
+    status: 'absent' | 'leave' | 'present';
+    punchIn: string | null;
+    punchOut: string | null;
 }

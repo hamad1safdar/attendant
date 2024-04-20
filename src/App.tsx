@@ -1,8 +1,9 @@
 import { useEffect, type FC } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import Auth from './pages/Auth';
+import Dashboard from './pages/Dashboard';
 
 import { useAppDispatch } from './store';
 import { getUsers } from './services/gists';
@@ -14,20 +15,22 @@ const NotFound: FC = () => <div>Not Found</div>;
 
 function App() {
     const dispatch = useAppDispatch();
-    const { data } = useQuery({
+    const { data: usersData } = useQuery({
         queryKey: ['gists/users'],
         queryFn: () => getUsers(),
     });
 
     useEffect(() => {
-        if (data) {
-            dispatch(setUsers(data));
+        if (usersData) {
+            dispatch(setUsers(usersData));
         }
-    }, [data]);
+    }, [usersData]);
 
     return (
         <Routes>
-            <Route path="/auth/:type" element={<Auth />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="*" element={<Navigate to={'/auth'} />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );
