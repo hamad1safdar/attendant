@@ -24,6 +24,7 @@ export interface User {
     hoursWorked: number;
     joiningDate: string;
     isDefaultPassword: boolean;
+    record: Array<AttendanceRecord>;
 }
 
 export type EmployeeId = string;
@@ -52,22 +53,14 @@ export interface GistContent {
     content: string;
 }
 
-export interface HelperData {
-    lastKey: {
-        Engineering: string;
-        Marketing: string;
-    };
-    departments: {
-        Engineering: string;
-        Marketing: string;
-    };
-    positions: {
-        Engineering: Array<string>;
-        Marketing: Array<string>;
-    };
-}
-
 export interface UserState {
     currentUser: User | null;
     users: Array<User>;
+}
+
+export interface AttendanceRecord {
+    date: string;
+    status: 'absent' | 'leave' | 'present';
+    punchIn: string | null;
+    punchOut: string | null;
 }

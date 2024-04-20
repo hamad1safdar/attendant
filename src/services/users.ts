@@ -1,4 +1,5 @@
-import { EmployeeId, User } from '../types';
+import { current } from '@reduxjs/toolkit';
+import { AttendanceRecord, EmployeeId, User } from '../types';
 
 export const addUser = (newUser: User, users: Array<User>): Array<User> => {
     return [...users, newUser];
@@ -25,4 +26,26 @@ export const updateUser = (
         { ...users[index], ...updatedUserAttributes },
         ...users.filter((user) => user.emplyeeId !== employeeId),
     ];
+};
+
+export const requestLeave = (
+    employeeId: EmployeeId,
+    leaveObject: AttendanceRecord,
+    users: Array<User>
+) => {
+    const index = users.findIndex((user) => user.emplyeeId === employeeId);
+    if (index < 0) {
+        return { updatedUser: null, users };
+    }
+
+    const userWithLeave = {
+        ...users[index],
+        record: [leaveObject, ...users[index].record],
+    };
+    const allUsers = [
+        userWithLeave,
+        ...users.filter((user) => user.emplyeeId !== employeeId),
+    ];
+
+    return { updateUser: userWithLeave, users: allUsers };
 };

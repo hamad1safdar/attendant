@@ -2,7 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 import * as userService from '../services/users';
-import type { EmployeeId, User, UpdateUserPayload, UserState } from '../types';
+import type {
+    EmployeeId,
+    User,
+    UpdateUserPayload,
+    UserState,
+    AttendanceRecord,
+} from '../types';
 
 const initialState: UserState = {
     currentUser: null,
@@ -22,7 +28,20 @@ const slice = createSlice({
         logout(state) {
             state.currentUser = null;
         },
+        punchIn(state, action: PayloadAction<AttendanceRecord>) {},
+        punchOut(state, action: PayloadAction<AttendanceRecord>) {},
+        requestLeave(state, action: PayloadAction<AttendanceRecord>) {
+            state.currentUser?.record.push(action.payload);
+            const foundUser = state.users.find(
+                (user) => user.emplyeeId === state.currentUser?.emplyeeId
+            );
+            //current user with updated leave object
+            state.currentUser = foundUser!;
+        },
         setUsers(state, action: PayloadAction<Array<User>>) {
+            state.currentUser = action.payload.find(
+                (user) => user.emplyeeId === state.currentUser?.emplyeeId
+            )!;
             state.users = action.payload;
         },
         deleteUser(state, action: PayloadAction<EmployeeId>) {

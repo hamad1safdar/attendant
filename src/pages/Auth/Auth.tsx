@@ -70,8 +70,12 @@ const Auth: FC = () => {
                     <Input
                         name="pin"
                         placeholder="Pin"
+                        type="password"
                         onChange={handleChange}
                         value={credentials.pin}
+                        inputProps={{
+                            maxLength: 4,
+                        }}
                         startAdornment={
                             <InputAdornment position="start">
                                 <Lock htmlColor="#01bfa6" />

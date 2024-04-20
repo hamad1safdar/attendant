@@ -57,12 +57,20 @@ const PinChangeModal: FC<PinChangeModalProps> = ({
                         name="pin"
                         placeholder="New pin"
                         onChange={handleChange}
+                        type="password"
+                        inputProps={{
+                            maxLength: 4,
+                        }}
                     />
                     <Input
                         name="confirmPin"
                         placeholder="Confirm pin"
+                        type="passwrod"
                         value={values.confirmPin}
                         onChange={handleChange}
+                        inputProps={{
+                            maxLength: 4,
+                        }}
                     />
                 </Container>
             </DialogContent>
