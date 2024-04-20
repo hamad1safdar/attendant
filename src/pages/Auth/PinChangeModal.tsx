@@ -10,6 +10,7 @@ import { styled } from '@mui/material/styles';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import useAlert from '../../hooks/useAlert';
 
 interface PinChangeModalProps {
     open: boolean;
@@ -23,6 +24,7 @@ const PinChangeModal: FC<PinChangeModalProps> = ({
     onSaveClick,
 }) => {
     const [values, setValues] = useState({ pin: '', confirmPin: '' });
+    const showAlert = useAlert();
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
@@ -31,15 +33,15 @@ const PinChangeModal: FC<PinChangeModalProps> = ({
 
     const handleSaveClick = () => {
         if (!values.pin || !values.confirmPin) {
-            alert('Please provide new pin and confirm pin!');
+            showAlert('Please provide new pin and confirm pin!', 'error');
             return;
         }
         if (values.pin.length !== 4) {
-            alert('Pin must be of 4 characters!');
+            showAlert('Pin must be of 4 characters!', 'error');
             return;
         }
         if (values.pin !== values.confirmPin) {
-            alert('Please provide same pin!');
+            showAlert('Please provide same pin!', 'error');
             return;
         }
 

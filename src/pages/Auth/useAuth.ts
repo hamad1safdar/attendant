@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
+import useAlert from '../../hooks/useAlert';
+
 import { useAppDispatch, useAppSelector } from '../../store';
 import { authenticate } from '../../services/auth';
 import { updateUsers as updateUsersOnGist } from '../../services/gists';
@@ -20,14 +22,17 @@ const useAuth = () => {
     const queryClient = useQueryClient();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const showAlert = useAlert();
     const { mutate: syncWithGist } = useMutation({
         mutationFn: updateUsersOnGist,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['gists/users'] });
-            alert('Pin updated successfully. Please login again to continue!');
+            showAlert(
+                'Pin updated successfully. Please login again to continue!'
+            );
         },
         onError: () => {
-            alert('Something went wrong!');
+            showAlert('Something went wrong!', 'error');
         },
     });
 

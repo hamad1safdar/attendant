@@ -14,9 +14,11 @@ import useAuth from './useAuth';
 import useModal from '../../hooks/useModal';
 
 import './styles.css';
+import useAlert from '../../hooks/useAlert';
 
 const Auth: FC = () => {
     const [credentials, setCredentials] = useState({ employeeId: '', pin: '' });
+    const showAlert = useAlert();
 
     const { isOpen, openModal, closeModal } = useModal();
     const { handlePinChange, authenticateUserCreds, onAuthSuccess } = useAuth();
@@ -28,7 +30,7 @@ const Auth: FC = () => {
 
     const handleAuthenticate = () => {
         if (!credentials.employeeId || !credentials.pin) {
-            alert('Please add required fields');
+            showAlert('Please fill in required detail!', 'error');
             return;
         }
         const result = authenticateUserCreds(credentials);
@@ -39,7 +41,7 @@ const Auth: FC = () => {
                 onAuthSuccess(result.loggedInUser!);
             }
         } else {
-            alert('Invalid employee ID or pin!');
+            showAlert('Invalid employee ID or pin!', 'error');
         }
     };
 

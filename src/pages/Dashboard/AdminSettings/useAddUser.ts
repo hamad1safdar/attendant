@@ -2,10 +2,11 @@ import { useState, ChangeEvent } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
-import { useAppSelector } from '../../../store';
-import { updateUsers as updateUsersGist } from '../../../services/gists';
+import useAlert from '../../../hooks/useAlert';
 
+import { useAppSelector } from '../../../store';
 import { addUser } from '../../../services/users';
+import { updateUsers as updateUsersGist } from '../../../services/gists';
 import { generateEmployeeID, getLastEntryByNumber } from '../../../helper';
 import { DEPARTMENTS, POSITIONS, PREFIXES, getUserDefaults } from './utils';
 
@@ -21,6 +22,7 @@ export default function useAddUser() {
     const [values, setValues] = useState(initialState);
     const { users } = useAppSelector((state) => state.users);
     const queryClient = useQueryClient();
+    const showAlert = useAlert();
 
     const { mutate: syncWithGist, isPending } = useMutation({
         mutationFn: updateUsersGist,
@@ -29,7 +31,7 @@ export default function useAddUser() {
             setValues(initialState);
         },
         onError: () => {
-            alert('Something went wrong!');
+            showAlert('Something went wrong!', 'error');
         },
     });
 
@@ -55,7 +57,10 @@ export default function useAddUser() {
 
     const handleSaveClick = () => {
         if (!Object.values(values).every((v) => v)) {
-            alert('Please complete the add user form before submitting!');
+            showAlert(
+                'Please complete the add user form before submitting!',
+                'error'
+            );
             return;
         }
         const lastKey = getLastEntryByNumber(

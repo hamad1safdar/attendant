@@ -10,6 +10,7 @@ import { getUsers } from './services/gists';
 import { setUsers } from './store/user.slice';
 
 import './App.css';
+import Alert from './components/Alert';
 
 const NotFound: FC = () => <div>Not Found</div>;
 
@@ -27,12 +28,15 @@ function App() {
     }, [usersData]);
 
     return (
-        <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<Navigate to={'/auth'} />} />
-            <Route path="*" element={<NotFound />} />
-        </Routes>
+        <>
+            <Alert />
+            <Routes>
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="*" element={<Navigate to={'/auth'} />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </>
     );
 }
 

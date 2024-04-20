@@ -64,3 +64,18 @@ export interface AttendanceRecord {
     punchIn: string | null;
     punchOut: string | null;
 }
+
+export interface HelperState {
+    isLoading: IsLoading;
+    alert: AlertState;
+}
+
+export interface AlertState {
+    show: boolean;
+    message: string;
+    type: Severity;
+}
+
+export type Severity = 'error' | 'info' | 'success' | 'warning';
+
+export type IsLoading = boolean;
