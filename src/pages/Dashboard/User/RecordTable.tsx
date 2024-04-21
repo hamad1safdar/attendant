@@ -1,7 +1,7 @@
 import {
     Dialog,
+    DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Table,
     TableBody,
@@ -12,21 +12,29 @@ import {
 import { FC } from 'react';
 import { useAppSelector } from '../../../store';
 import Input from '../../../components/Input';
+import Button from '../../../components/Button';
 
 interface Props {
     open: boolean;
+    handleClose: () => void;
 }
 
-const RecordTable: FC<Props> = ({ open }) => {
-    const { firstName, lastName, record } = useAppSelector(
-        (state) => state.users.currentUser!
-    );
+const RecordTable: FC<Props> = ({ open, handleClose }) => {
+    const { record } = useAppSelector((state) => state.users.currentUser!);
     return (
         <Dialog open={open} fullWidth maxWidth="xl">
             <DialogTitle>Attendance Record</DialogTitle>
-            <DialogContentText>{firstName + ' ' + lastName}</DialogContentText>
             <DialogContent>
-                <Input type="date" placeholder="Search date" />
+                <div
+                    style={{
+                        width: '100%',
+                        margin: '0 auto',
+                        textAlign: 'center',
+                        padding: '30px 0',
+                    }}
+                >
+                    <Input type="date" placeholder="Search date" />
+                </div>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -44,6 +52,9 @@ const RecordTable: FC<Props> = ({ open }) => {
                     </TableBody>
                 </Table>
             </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose}>Close</Button>
+            </DialogActions>
         </Dialog>
     );
 };

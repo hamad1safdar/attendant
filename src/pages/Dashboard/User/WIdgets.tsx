@@ -35,7 +35,7 @@ const AccountActions: FC = () => {
                     onClick={() => setOpen(true)}
                 />
             </div>
-            <RecordTable open={open} />
+            <RecordTable open={open} handleClose={() => setOpen(false)} />
         </>
     );
 };
