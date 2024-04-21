@@ -28,15 +28,20 @@ const slice = createSlice({
         logout(state) {
             state.currentUser = null;
         },
+        //
         punchIn(state, action: PayloadAction<AttendanceRecord>) {
             state.currentUser?.record.unshift(action.payload);
+            state.users = replaceUser(state.currentUser!, state.users);
         },
         punchOut(state, action: PayloadAction<AttendanceRecord['punchOut']>) {
             state.currentUser!.record[0].punchOut = action.payload;
+            state.users = replaceUser(state.currentUser!, state.users);
         },
         requestLeave(state, action: PayloadAction<AttendanceRecord>) {
             state.currentUser?.record.unshift(action.payload);
+            state.users = replaceUser(state.currentUser!, state.users);
         },
+        //
         setUsers(state, action: PayloadAction<Array<User>>) {
             state.currentUser = action.payload.find(
                 (user) => user.emplyeeId === state.currentUser?.emplyeeId
@@ -69,5 +74,15 @@ export const {
     punchIn,
     punchOut,
     requestLeave,
+    addUser,
 } = slice.actions;
 export default slice.reducer;
+
+const replaceUser = (user: User, users: Array<User>) => {
+    const index = users.findIndex((u) => u.emplyeeId === user.emplyeeId);
+    if (index < 0) {
+        return users;
+    } else {
+        return [...users.slice(0, index), user, ...users.slice(index + 1)];
+    }
+};

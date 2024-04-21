@@ -1,6 +1,7 @@
-import { type FC } from 'react';
+import { useState, type FC } from 'react';
 
 import useAttendance from './useAttendance';
+import RecordTable from './RecordTable';
 
 type ActionProps = {
     label: string;
@@ -21,6 +22,7 @@ const Action: FC<ActionProps> = ({ label, onClick }) => {
 
 const AccountActions: FC = () => {
     const { message, handleAttendanceClick, bookLeave } = useAttendance();
+    const [open, setOpen] = useState(false);
 
     return (
         <>
@@ -28,8 +30,12 @@ const AccountActions: FC = () => {
             <div className="action-container centered-flex">
                 <Action label="Punch In/Out" onClick={handleAttendanceClick} />
                 <Action label="Book leave for today" onClick={bookLeave} />
-                <Action label="View previous record" onClick={() => {}} />
+                <Action
+                    label="View previous record"
+                    onClick={() => setOpen(true)}
+                />
             </div>
+            <RecordTable open={open} />
         </>
     );
 };

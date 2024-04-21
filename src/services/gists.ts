@@ -27,7 +27,10 @@ export const updateUsers = async (newUsers: Array<User>) => {
             },
         },
     };
-    await updateGistById(USER_GIST_ID, newGist);
+    const response = await updateGistById(USER_GIST_ID, newGist);
+    return JSON.parse(
+        (response.data.files as GistFile)[USER_GIST_NAME].content
+    );
 };
 
 //GIST Common API
