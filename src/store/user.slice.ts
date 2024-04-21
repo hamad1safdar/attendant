@@ -28,15 +28,14 @@ const slice = createSlice({
         logout(state) {
             state.currentUser = null;
         },
-        punchIn(state, action: PayloadAction<AttendanceRecord>) {},
-        punchOut(state, action: PayloadAction<AttendanceRecord>) {},
+        punchIn(state, action: PayloadAction<AttendanceRecord>) {
+            state.currentUser?.record.unshift(action.payload);
+        },
+        punchOut(state, action: PayloadAction<AttendanceRecord['punchOut']>) {
+            state.currentUser!.record[0].punchOut = action.payload;
+        },
         requestLeave(state, action: PayloadAction<AttendanceRecord>) {
-            state.currentUser?.record.push(action.payload);
-            const foundUser = state.users.find(
-                (user) => user.emplyeeId === state.currentUser?.emplyeeId
-            );
-            //current user with updated leave object
-            state.currentUser = foundUser!;
+            state.currentUser?.record.unshift(action.payload);
         },
         setUsers(state, action: PayloadAction<Array<User>>) {
             state.currentUser = action.payload.find(
@@ -61,6 +60,14 @@ const slice = createSlice({
     },
 });
 
-export const { setUsers, deleteUser, updateUser, login, logout } =
-    slice.actions;
+export const {
+    setUsers,
+    deleteUser,
+    updateUser,
+    login,
+    logout,
+    punchIn,
+    punchOut,
+    requestLeave,
+} = slice.actions;
 export default slice.reducer;
