@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 
 export default styled(Button)`
     width: fit-content;
