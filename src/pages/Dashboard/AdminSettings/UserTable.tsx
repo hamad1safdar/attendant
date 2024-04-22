@@ -1,15 +1,18 @@
+import { useCallback, useState } from 'react';
 import {
     DataGrid,
-    type GridRenderCellParams,
     GridToolbar,
+    type GridRenderCellParams,
 } from '@mui/x-data-grid';
 
-import { useAppDispatch, useAppSelector } from '../../../store';
 import Button from '../../../components/Button';
+import Confirmation from '../../../components/Confirmation';
+
 import { type EmployeeId } from '../../../types';
+import { useAppDispatch, useAppSelector } from '../../../store';
 import { deleteUser } from '../../../store/user.slice';
 
-type GridColumDef = {
+interface GridColumDef {
     field: string;
     headerName: string;
     width?: number;
@@ -17,7 +20,7 @@ type GridColumDef = {
     renderCell?: any;
     headerClassName: string;
     sortable?: boolean;
-};
+}
 
 const columns: GridColumDef[] = [
     { field: 'emplyeeId', headerName: 'ID', flex: 0.5 },
@@ -26,17 +29,25 @@ const columns: GridColumDef[] = [
     { field: 'email', headerName: 'Email', width: 250 },
     { field: 'department', headerName: 'Department', width: 200 },
     { field: 'position', headerName: 'Postion', width: 200 },
-].map((d) => ({ flex: 1, ...d, headerClassName: 'datagrid-header' }));
+].map((d) => ({ flex: 1, headerClassName: 'datagrid-header', ...d }));
 
 const DataTable = () => {
     const { users } = useAppSelector((state) => state.users);
+    const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+    const [selectedId, setSelectedId] = useState<EmployeeId>('');
     const dispatch = useAppDispatch();
 
-    const handleDelete = (employeeId: EmployeeId) => {
-        dispatch(deleteUser(employeeId));
+    const handlePositiveDelete = useCallback(() => {
+        if (!selectedId) return;
+        dispatch(deleteUser(selectedId));
+    }, [selectedId]);
+
+    const handleDeleteClick = (employeeId: EmployeeId) => {
+        setOpenConfirmationDialog(true);
+        setSelectedId(employeeId);
     };
 
-    const columnWithAction = [
+    const columnWithAction: GridColumDef[] = [
         ...columns,
         {
             field: 'action',
@@ -45,34 +56,52 @@ const DataTable = () => {
             headerClassName: 'datagrid-header',
             renderCell: (params: GridRenderCellParams) => {
                 const onClick = () => {
-                    handleDelete(params.id as EmployeeId);
+                    handleDeleteClick(params.id as EmployeeId);
                 };
-
-                return <Button color='error' onClick={onClick}>Delete</Button>;
+                return (
+                    <Button color="error" onClick={onClick}>
+                        Delete
+                    </Button>
+                );
             },
         },
     ];
 
     const usersWithoutAdmin = users.filter((user) => user.role !== 'admin');
     return (
-        <DataGrid
-            disableRowSelectionOnClick
-            getRowId={(row) => row.emplyeeId}
-            getRowClassName={() => 'datagrid-row'}
-            columns={columnWithAction}
-            rows={usersWithoutAdmin}
-            disableColumnFilter
-            disableColumnSelector
-            disableDensitySelector
-            slots={{ toolbar: GridToolbar }}
-            slotProps={{
-                toolbar: {
-                    showQuickFilter: true,
-                    printOptions: { disableToolbarButton: true },
-                    csvOptions: { disableToolbarButton: true },
-                },
-            }}
-        />
+        <>
+            <Confirmation
+                open={openConfirmationDialog}
+                onPositive={handlePositiveDelete}
+                onClose={() => setOpenConfirmationDialog(false)}
+                message={`Are you sure you want to delete record of ${selectedId}?`}
+                positiveButtonText="Delete"
+                negativeButtonText="Canel"
+                isPositiveDanger
+            />
+            <DataGrid
+                disableRowSelectionOnClick
+                getRowId={(row) => row.emplyeeId}
+                getRowClassName={() => 'datagrid-row'}
+                columns={columnWithAction}
+                rows={usersWithoutAdmin}
+                disableColumnFilter
+                disableColumnSelector
+                disableDensitySelector
+                autoHeight
+                localeText={{
+                    noRowsLabel: 'No users exists. Add users to display.',
+                }}
+                slots={{ toolbar: GridToolbar }}
+                slotProps={{
+                    toolbar: {
+                        showQuickFilter: true,
+                        printOptions: { disableToolbarButton: true },
+                        csvOptions: { disableToolbarButton: true },
+                    },
+                }}
+            />
+        </>
     );
 };
 

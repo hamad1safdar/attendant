@@ -24,7 +24,7 @@ export default function useAddUser() {
     const queryClient = useQueryClient();
     const showAlert = useAlert();
 
-    const { mutate: syncWithGist, isPending } = useMutation({
+    const { mutate: syncWithGist } = useMutation({
         mutationFn: updateUsersGist,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['gists/users'] });
@@ -84,6 +84,5 @@ export default function useAddUser() {
         handleInputChange,
         handleSaveClick,
         handleSelectChange,
-        isAdding: isPending,
     };
 }

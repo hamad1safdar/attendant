@@ -5,23 +5,16 @@ import { MenuItem } from '@mui/material';
 
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
-import Loader from '../../../components/Loader';
 import useAddUser from './useAddUser';
 
 import { DEPARTMENTS, POSITIONS } from './utils';
 
 const AddUserForm = () => {
-    const {
-        values,
-        isAdding,
-        handleInputChange,
-        handleSelectChange,
-        handleSaveClick,
-    } = useAddUser();
+    const { values, handleInputChange, handleSelectChange, handleSaveClick } =
+        useAddUser();
 
     return (
         <div className="form">
-            <Loader show={isAdding} />
             <h2>Add new user</h2>
             <div className="inline-form centered-flex">
                 <div>
