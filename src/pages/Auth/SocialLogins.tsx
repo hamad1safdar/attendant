@@ -15,7 +15,7 @@ const Container = styled('div')`
     text-align: center;
 `;
 
-export default () => (
+const SocialLogins = () => (
 	<Container>
 		<p>Or sign in using social platforms</p>
 		<StyledLink to="#">
@@ -32,3 +32,5 @@ export default () => (
 		</StyledLink>
 	</Container>
 );
+
+export default SocialLogins;
