@@ -1,4 +1,3 @@
-import { current } from '@reduxjs/toolkit';
 import { AttendanceRecord, EmployeeId, User } from '../types';
 
 export const addUser = (newUser: User, users: Array<User>): Array<User> => {

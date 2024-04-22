@@ -50,3 +50,12 @@
     color: var(--primary-color);
     font-size: 36px;
 }
+
+.MuiTable-root {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+}
+
+.MuiTableBody-root {
+    background-color: var(--secondary-color);
+}
