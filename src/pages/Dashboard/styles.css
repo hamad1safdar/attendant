@@ -13,9 +13,9 @@
 }
 
 .logout {
-    position: absolute;
-    top: 50px;
-    right: 70px;
+    width: 100%;
+    text-align: right;
+    margin-right: 60px;
 }
 
 .greetings {
@@ -58,4 +58,8 @@
 
 .MuiTableBody-root {
     background-color: var(--secondary-color);
+}
+
+.custom-select {
+    width: 200px;
 }
