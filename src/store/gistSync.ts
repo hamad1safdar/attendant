@@ -1,5 +1,11 @@
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
-import { punchIn, punchOut, requestLeave, setUsers } from './user.slice';
+import {
+    deleteUser,
+    punchIn,
+    punchOut,
+    requestLeave,
+    setUsers,
+} from './user.slice';
 
 import { AppDispatch, RootState } from './store';
 import { updateUsers } from '../services/gists';
@@ -12,7 +18,7 @@ const startListening = middleware.startListening.withTypes<
 >();
 
 startListening({
-    matcher: isAnyOf(punchIn, punchOut, requestLeave),
+    matcher: isAnyOf(punchIn, punchOut, requestLeave, deleteUser),
     effect: async (_action, { dispatch, getState }) => {
         const { users } = getState().users;
         try {
