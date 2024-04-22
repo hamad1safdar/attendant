@@ -50,7 +50,7 @@ const useAttendance = () => {
         }
         if (status === 'COMPLETED') {
             showAlert(
-                'Your leave has been booked. No need to request again!',
+                'Your workday has been marked completed for today. Try again tomorrow!',
                 'info'
             );
         }

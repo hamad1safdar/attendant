@@ -1,6 +1,9 @@
-import {DataGrid, GridToolbar} from '@mui/x-data-grid';
+import {DataGrid, type GridRenderCellParams, GridToolbar} from '@mui/x-data-grid';
 
-import {useAppSelector} from '../../../store';
+import {useAppDispatch, useAppSelector} from '../../../store';
+import Button from '../../../components/Button';
+import {type EmployeeId} from '../../../types';
+import {deleteUser} from '../../../store/user.slice';
 
 type GridColumDef = {
 	field: string;
@@ -9,6 +12,7 @@ type GridColumDef = {
 	editable?: boolean;
 	renderCell?: any;
 	headerClassName: string;
+	sortable?: boolean;
 };
 
 const columns: GridColumDef[] = [
@@ -22,13 +26,37 @@ const columns: GridColumDef[] = [
 
 const DataTable = () => {
 	const {users} = useAppSelector((state) => state.users);
+	const dispatch = useAppDispatch();
+
+	const handleDelete = (employeeId: EmployeeId) => {
+		dispatch(deleteUser(employeeId));
+	};
+
+	const columnWithAction = [
+		...columns,
+		{
+			field: 'action',
+			headerName: 'Actions',
+			sortable: false,
+			headerClassName: 'datagrid-header',
+			renderCell: (params: GridRenderCellParams) => {
+				const onClick = () => {
+					handleDelete(params.id as EmployeeId);
+				};
+
+				return <Button onClick={onClick}>Delete</Button>;
+			},
+		},
+	];
+
+	const usersWithoutAdmin = users.filter((user) => user.role !== 'admin');
 	return (
 		<DataGrid
 			disableRowSelectionOnClick
 			getRowId={(row) => row.emplyeeId}
 			getRowClassName={() => 'datagrid-row'}
-			columns={columns}
-			rows={users}
+			columns={columnWithAction}
+			rows={usersWithoutAdmin}
 			disableColumnFilter
 			disableColumnSelector
 			disableDensitySelector
