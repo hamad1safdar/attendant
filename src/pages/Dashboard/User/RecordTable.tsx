@@ -9,10 +9,14 @@ import {
     TableHead,
     TableRow,
 } from '@mui/material';
-import { FC } from 'react';
-import { useAppSelector } from '../../../store';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
+
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
+
+import { useAppSelector } from '../../../store';
+import type { AttendanceRecord } from '../../../types';
+import { getFormattedDate, unformatDate } from '../../../utils';
 
 interface Props {
     open: boolean;
@@ -21,6 +25,21 @@ interface Props {
 
 const RecordTable: FC<Props> = ({ open, handleClose }) => {
     const { record } = useAppSelector((state) => state.users.currentUser!);
+    const [query, setQuery] = useState('');
+    const [filtered, setFiltered] = useState<Array<AttendanceRecord>>(record);
+    const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        if (!value) return;
+        setQuery(getFormattedDate(new Date(value)));
+    };
+
+    useEffect(() => {
+        if (query) {
+            setFiltered(record.filter((r) => r.date.includes(query)));
+        } else {
+            setFiltered(record);
+        }
+    }, [query]);
     return (
         <Dialog open={open} fullWidth maxWidth="xl">
             <DialogTitle>Attendance Record</DialogTitle>
@@ -33,7 +52,12 @@ const RecordTable: FC<Props> = ({ open, handleClose }) => {
                         padding: '30px 0',
                     }}
                 >
-                    <Input type="date" placeholder="Search date" />
+                    <Input
+                        onChange={handleDateChange}
+                        value={unformatDate(query)}
+                        type="date"
+                        placeholder="Search date"
+                    />
                 </div>
                 <Table>
                     <TableHead>
@@ -43,7 +67,7 @@ const RecordTable: FC<Props> = ({ open, handleClose }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {record.map((r) => (
+                        {filtered.map((r) => (
                             <TableRow key={r.date}>
                                 <TableCell>{r.date}</TableCell>
                                 <TableCell>{r.status}</TableCell>
