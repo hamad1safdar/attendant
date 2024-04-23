@@ -5,16 +5,13 @@ import {useNavigate} from 'react-router-dom';
 
 import AccountActions from './User/WIdgets';
 import AdminSettings from './AdminSettings';
-import Button from '../../components/Button';
 
-import {useAppDispatch, useAppSelector} from '../../store';
+import {useAppSelector} from '../../store';
 
 import './styles.css';
-import {logout} from '../../store/user.slice';
 
 const Dashboard: FC = () => {
 	const navigate = useNavigate();
-	const dispatch = useAppDispatch();
 
 	const {currentUser} = useAppSelector((state) => state.users);
 
@@ -25,17 +22,10 @@ const Dashboard: FC = () => {
 		}
 	}, [currentUser]);
 
-	const handleLogout = () => {
-		dispatch(logout());
-	};
-
 	if (!currentUser) return;
 
 	return (
 		<div className="dashboard-page centered-flex-column">
-			<div className="logout">
-				<Button onClick={handleLogout}>Logout</Button>
-			</div>
 			<div className="user-info">
 				<Avatar
 					sx={{

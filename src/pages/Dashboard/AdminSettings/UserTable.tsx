@@ -1,9 +1,16 @@
-import {DataGrid, type GridRenderCellParams, GridToolbar} from '@mui/x-data-grid';
+import {useCallback, useState} from 'react';
+import {
+	DataGrid,
+	GridToolbar,
+	type GridRenderCellParams,
+} from '@mui/x-data-grid';
 
-import {useAppDispatch, useAppSelector} from '../../../store';
 import Button from '../../../components/Button';
+import Confirmation from '../../../components/Confirmation';
+
 import {type EmployeeId} from '../../../types';
-import {deleteUser} from '../../../store/user.slice';
+
+import useApp from '../../../hooks/useApp';
 
 type GridColumDef = {
 	field: string;
@@ -16,23 +23,30 @@ type GridColumDef = {
 };
 
 const columns: GridColumDef[] = [
-	{field: 'emplyeeId', headerName: 'ID'},
+	{field: 'emplyeeId', headerName: 'ID', flex: 0.5},
 	{field: 'firstName', headerName: 'First name'},
 	{field: 'lastName', headerName: 'Last name'},
 	{field: 'email', headerName: 'Email', width: 250},
 	{field: 'department', headerName: 'Department', width: 200},
 	{field: 'position', headerName: 'Postion', width: 200},
-].map((d) => ({...d, headerClassName: 'datagrid-header'}));
+].map((d) => ({flex: 1, headerClassName: 'datagrid-header', ...d}));
 
 const DataTable = () => {
-	const {users} = useAppSelector((state) => state.users);
-	const dispatch = useAppDispatch();
+	const {users, deleteUser} = useApp();
+	const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+	const [selectedId, setSelectedId] = useState<EmployeeId>('');
 
-	const handleDelete = (employeeId: EmployeeId) => {
-		dispatch(deleteUser(employeeId));
+	const handlePositiveDelete = useCallback(() => {
+		if (!selectedId) return;
+		deleteUser(selectedId);
+	}, [selectedId]);
+
+	const handleDeleteClick = (employeeId: EmployeeId) => {
+		setOpenConfirmationDialog(true);
+		setSelectedId(employeeId);
 	};
 
-	const columnWithAction = [
+	const columnWithAction: GridColumDef[] = [
 		...columns,
 		{
 			field: 'action',
@@ -41,34 +55,55 @@ const DataTable = () => {
 			headerClassName: 'datagrid-header',
 			renderCell: (params: GridRenderCellParams) => {
 				const onClick = () => {
-					handleDelete(params.id as EmployeeId);
+					handleDeleteClick(params.id as EmployeeId);
 				};
 
-				return <Button onClick={onClick}>Delete</Button>;
+				return (
+					<Button color="error" onClick={onClick}>
+                        Delete
+					</Button>
+				);
 			},
 		},
 	];
 
-	const usersWithoutAdmin = users.filter((user) => user.role !== 'admin');
+	const usersWithoutAdmin = users?.filter((user) => user.role !== 'admin');
 	return (
-		<DataGrid
-			disableRowSelectionOnClick
-			getRowId={(row) => row.emplyeeId}
-			getRowClassName={() => 'datagrid-row'}
-			columns={columnWithAction}
-			rows={usersWithoutAdmin}
-			disableColumnFilter
-			disableColumnSelector
-			disableDensitySelector
-			slots={{toolbar: GridToolbar}}
-			slotProps={{
-				toolbar: {
-					showQuickFilter: true,
-					printOptions: {disableToolbarButton: true},
-					csvOptions: {disableToolbarButton: true},
-				},
-			}}
-		/>
+		<>
+			<Confirmation
+				open={openConfirmationDialog}
+				onPositive={handlePositiveDelete}
+				onClose={() => {
+					setOpenConfirmationDialog(false); 
+				}}
+				message={`Are you sure you want to delete record of ${selectedId}?`}
+				positiveButtonText="Delete"
+				negativeButtonText="Canel"
+				isPositiveDanger
+			/>
+			<DataGrid
+				disableRowSelectionOnClick
+				getRowId={(row) => row.emplyeeId}
+				getRowClassName={() => 'datagrid-row'}
+				columns={columnWithAction}
+				rows={usersWithoutAdmin}
+				disableColumnFilter
+				disableColumnSelector
+				disableDensitySelector
+				autoHeight
+				localeText={{
+					noRowsLabel: 'No users exists. Add users to display.',
+				}}
+				slots={{toolbar: GridToolbar}}
+				slotProps={{
+					toolbar: {
+						showQuickFilter: true,
+						printOptions: {disableToolbarButton: true},
+						csvOptions: {disableToolbarButton: true},
+					},
+				}}
+			/>
+		</>
 	);
 };
 

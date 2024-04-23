@@ -1,14 +1,11 @@
 import { useState, ChangeEvent } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
-import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 import useAlert from '../../../hooks/useAlert';
 
-import { useAppSelector } from '../../../store';
-import { addUser } from '../../../services/users';
-import { updateUsers as updateUsersGist } from '../../../services/gists';
 import { generateEmployeeID, getLastEntryByNumber } from '../../../helper';
 import { DEPARTMENTS, POSITIONS, PREFIXES, getUserDefaults } from './utils';
+import useApp from '../../../hooks/useApp';
 
 const initialState = {
     firstName: '',
@@ -20,20 +17,9 @@ const initialState = {
 
 export default function useAddUser() {
     const [values, setValues] = useState(initialState);
-    const { users } = useAppSelector((state) => state.users);
-    const queryClient = useQueryClient();
+    // const { users } = useAppSelector((state) => state.users);
+    const { users, addUser: addUsersToGist } = useApp();
     const showAlert = useAlert();
-
-    const { mutate: syncWithGist, isPending } = useMutation({
-        mutationFn: updateUsersGist,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['gists/users'] });
-            setValues(initialState);
-        },
-        onError: () => {
-            showAlert('Something went wrong!', 'error');
-        },
-    });
 
     const handleInputChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -64,19 +50,11 @@ export default function useAddUser() {
             return;
         }
         const lastKey = getLastEntryByNumber(
-            users,
+            users!,
             PREFIXES[values.department]
         );
         const newKey = generateEmployeeID(lastKey);
-        const newUsers = addUser(
-            {
-                ...values,
-                emplyeeId: newKey,
-                ...getUserDefaults(),
-            },
-            users
-        );
-        syncWithGist(newUsers);
+        addUsersToGist({ emplyeeId: newKey, ...values, ...getUserDefaults() });
     };
 
     return {
@@ -84,6 +62,5 @@ export default function useAddUser() {
         handleInputChange,
         handleSaveClick,
         handleSelectChange,
-        isAdding: isPending,
     };
 }

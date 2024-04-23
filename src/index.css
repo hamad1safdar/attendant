@@ -32,3 +32,18 @@ body {
 div[role='button'] {
     cursor: pointer;
 }
+
+/*
+Hack for avoiding user-agent stylesheet messing up the styles.
+*/
+
+input {
+    all: unset;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    transition: all 5000s ease-in-out 0s;
+}

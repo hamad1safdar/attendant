@@ -15,7 +15,9 @@ export const getUsers = async (): Promise<Array<User>> => {
     );
 };
 
-export const updateUsers = async (newUsers: Array<User>) => {
+export const updateUsers = async (
+    newUsers: Array<User>
+): Promise<Array<User>> => {
     const newGist: Gist = {
         files: {
             [USER_GIST_NAME]: {

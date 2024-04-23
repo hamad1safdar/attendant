@@ -1,8 +1,7 @@
 .dashboard-page {
     width: 100%;
     gap: 35px;
-    padding: 35px 0px;
-    min-height: 100vh;
+    padding: 35px 0;
 }
 
 .user-info {
@@ -10,12 +9,6 @@
     text-align: center;
     margin: 0 auto;
     position: relative;
-}
-
-.logout {
-    position: absolute;
-    top: 50px;
-    right: 70px;
 }
 
 .greetings {
@@ -40,6 +33,10 @@
     &:hover {
         box-shadow: 1px 1px 10px var(--gray);
     }
+
+    &:active {
+        box-shadow: 6px 6px 10px var(--gray);
+    }
 }
 
 .settings {
@@ -58,4 +55,8 @@
 
 .MuiTableBody-root {
     background-color: var(--secondary-color);
+}
+
+.custom-select {
+    width: 200px;
 }

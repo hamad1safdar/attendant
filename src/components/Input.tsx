@@ -7,5 +7,6 @@ export default styled(InputBase)`
     background-color: #f0f0f0;
     height: 45px;
     width: 320px;
-    padding-left: 10px;
+    padding: 2px 15px;
+    text-align: left;
 `;
