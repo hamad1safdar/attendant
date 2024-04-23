@@ -9,8 +9,8 @@ import Button from '../../../components/Button';
 import Confirmation from '../../../components/Confirmation';
 
 import { type EmployeeId } from '../../../types';
-import { useAppDispatch, useAppSelector } from '../../../store';
-import { deleteUser } from '../../../store/user.slice';
+
+import useApp from '../../../hooks/useApp';
 
 interface GridColumDef {
     field: string;
@@ -32,14 +32,13 @@ const columns: GridColumDef[] = [
 ].map((d) => ({ flex: 1, headerClassName: 'datagrid-header', ...d }));
 
 const DataTable = () => {
-    const { users } = useAppSelector((state) => state.users);
+    const { users, deleteUser } = useApp();
     const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
     const [selectedId, setSelectedId] = useState<EmployeeId>('');
-    const dispatch = useAppDispatch();
 
     const handlePositiveDelete = useCallback(() => {
         if (!selectedId) return;
-        dispatch(deleteUser(selectedId));
+        deleteUser(selectedId);
     }, [selectedId]);
 
     const handleDeleteClick = (employeeId: EmployeeId) => {
@@ -67,7 +66,7 @@ const DataTable = () => {
         },
     ];
 
-    const usersWithoutAdmin = users.filter((user) => user.role !== 'admin');
+    const usersWithoutAdmin = users?.filter((user) => user.role !== 'admin');
     return (
         <>
             <Confirmation

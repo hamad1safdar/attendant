@@ -1,14 +1,13 @@
-import { useCallback } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useAlert from '../../hooks/useAlert';
 
-import { useAppDispatch, useAppSelector } from '../../store';
+import { useAppDispatch } from '../../store';
 import { authenticate } from '../../services/auth';
-import { updateUsers as updateUsersOnGist } from '../../services/gists';
+
 import { updateUser as updateUserById } from '../../services/users';
-import { login } from '../../store/user.slice';
+import { setCurrentUser } from '../../store/user.slice';
 import type {
     AuthResult,
     AuthState,
@@ -16,35 +15,30 @@ import type {
     LoginCredentials,
     User,
 } from '../../types';
+import useApp from '../../hooks/useApp';
 
 const useAuth = () => {
-    const { users, currentUser } = useAppSelector((state) => state.users);
-    const queryClient = useQueryClient();
+    const { users, updateUsers, currentUser } = useApp();
+
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const showAlert = useAlert();
-    const { mutate: syncWithGist } = useMutation({
-        mutationFn: updateUsersOnGist,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['gists/users'] });
-            showAlert(
-                'Pin updated successfully. Please login again to continue!'
-            );
-        },
-        onError: () => {
-            showAlert('Something went wrong!', 'error');
-        },
-    });
+
+    useEffect(() => {
+        if (currentUser) {
+            navigate('/dashboard');
+        }
+    }, [currentUser]);
 
     const authenticateUserCreds = useCallback(
         (credentials: LoginCredentials): AuthResult => {
-            return authenticate(credentials, users);
+            return authenticate(credentials, users!);
         },
         [users]
     );
 
     const handlePinChange = useCallback(
-        (employeeId: EmployeeId, newPin: string): void => {
+        async (employeeId: EmployeeId, newPin: string): Promise<void> => {
             const attributesToUpdate: Partial<User> = {
                 pin: newPin,
                 isDefaultPassword: false,
@@ -52,21 +46,29 @@ const useAuth = () => {
             const updatedUserArray = updateUserById(
                 employeeId,
                 attributesToUpdate,
-                users
+                users!
             );
-            syncWithGist(updatedUserArray);
+            try {
+                await updateUsers(updatedUserArray);
+                showAlert(
+                    'Pin updated successfully. Please login again to continue!'
+                );
+            } catch (error) {
+                showAlert('Something went wrong!', 'error');
+            }
         },
         [users]
     );
 
     const onAuthSuccess = (loggedInUser: AuthState) => {
-        dispatch(login(loggedInUser.employeeId!));
-        navigate('/dashboard');
+        const user = users?.find(
+            (user) => user.emplyeeId === loggedInUser.employeeId
+        );
+        if (user) {
+            dispatch(setCurrentUser(user));
+            navigate('/dashboard');
+        }
     };
-
-    if (currentUser) {
-        navigate('/dashboard');
-    }
 
     return {
         authenticateUserCreds,

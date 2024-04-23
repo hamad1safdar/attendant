@@ -1,32 +1,37 @@
 import useAlert from '../../../hooks/useAlert';
+import useApp from '../../../hooks/useApp';
 
 import type { AttendanceRecord } from '../../../types';
 import { getCurrentTime, getToday } from '../../../utils';
-import { punchIn, punchOut, requestLeave } from '../../../store/user.slice';
-import { useAppDispatch, useAppSelector } from '../../../store';
 
 const useAttendance = () => {
-    const { record } = useAppSelector((state) => state.users.currentUser!);
-    const dispatch = useAppDispatch();
+    const {
+        currentUser,
+        punchIn,
+        punchOut,
+        bookLeave: requestLeave,
+    } = useApp();
+
     const showAlert = useAlert();
+
+    const record = currentUser!.record;
 
     const status = getAttendanceStatus(record, getToday());
     const message = makeMessage(status);
 
     const handleAttendanceClick = () => {
         if (status === 'ALLOW_ATTENDANCE') {
-            dispatch(
-                punchIn({
-                    date: getToday(),
-                    punchIn: getCurrentTime(),
-                    punchOut: null,
-                    status: 'present',
-                })
-            );
+            punchIn({
+                date: getToday(),
+                punchIn: getCurrentTime(),
+                punchOut: null,
+                status: 'present',
+            });
+
             return;
         }
         if (status === 'PENDING') {
-            dispatch(punchOut(getCurrentTime()));
+            punchOut(getCurrentTime());
         }
         if (status === 'COMPLETED') {
             showAlert("You can't punch in till tomorrow!", 'error');
@@ -35,14 +40,13 @@ const useAttendance = () => {
 
     const bookLeave = () => {
         if (status === 'ALLOW_ATTENDANCE') {
-            dispatch(
-                requestLeave({
-                    date: getToday(),
-                    punchIn: null,
-                    punchOut: null,
-                    status: 'leave',
-                })
-            );
+            requestLeave({
+                date: getToday(),
+                punchIn: null,
+                punchOut: null,
+                status: 'leave',
+            });
+
             showAlert('Your leave has been booked for today.', 'success');
         }
         if (status === 'PENDING') {

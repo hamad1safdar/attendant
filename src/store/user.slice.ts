@@ -28,6 +28,9 @@ const slice = createSlice({
         logout(state) {
             state.currentUser = null;
         },
+        setCurrentUser(state, action: PayloadAction<User>) {
+            state.currentUser = action.payload;
+        },
         //
         punchIn(state, action: PayloadAction<AttendanceRecord>) {
             state.currentUser?.record.unshift(action.payload);
@@ -75,6 +78,7 @@ export const {
     punchOut,
     requestLeave,
     addUser,
+    setCurrentUser,
 } = slice.actions;
 export default slice.reducer;
 
