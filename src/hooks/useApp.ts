@@ -21,13 +21,21 @@ const useApp = () => {
     const dispatch = useAppDispatch();
     const { currentUser } = useAppSelector((state) => state.users);
 
-    const { data: users } = useQuery<Array<User>>({
+    const {
+        data: users,
+        isLoading,
+        isFetching,
+    } = useQuery<Array<User>>({
         queryKey: [USERS_QUERY_KEY],
         queryFn: getUsers,
         placeholderData: [],
     });
 
-    const { mutate: updateUsersOnGist, mutateAsync } = useMutation({
+    const {
+        mutate: updateUsersOnGist,
+        mutateAsync,
+        isPending,
+    } = useMutation({
         mutationFn: updateUsersApi,
 
         onSuccess: (data: Array<User>) => {
@@ -87,6 +95,7 @@ const useApp = () => {
     return {
         users,
         currentUser,
+        isLoading: isLoading || isPending || isFetching,
         addUser,
         deleteUser,
         punchIn,

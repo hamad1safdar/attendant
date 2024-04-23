@@ -69,7 +69,7 @@ const PinChangeModal: FC<PinChangeModalProps> = ({
 					<Input
 						name="confirmPin"
 						placeholder="Confirm pin"
-						type="passwrod"
+						type="password"
 						value={values.confirmPin}
 						onChange={handleChange}
 						inputProps={{
