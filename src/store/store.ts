@@ -2,7 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import userReducer from './user.slice';
 import helperReducer from './helper.slice';
-import gistSyncMiddleware from './gistSync';
 
 export const store = configureStore({
     devTools: true,
@@ -10,8 +9,6 @@ export const store = configureStore({
         users: userReducer,
         helper: helperReducer,
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().prepend(gistSyncMiddleware.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
