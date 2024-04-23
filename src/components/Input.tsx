@@ -1,6 +1,6 @@
 import InputBase from '@mui/material/InputBase';
 
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 
 export default styled(InputBase)`
     border-radius: 25px;

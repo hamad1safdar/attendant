@@ -33,6 +33,10 @@
     &:hover {
         box-shadow: 1px 1px 10px var(--gray);
     }
+
+    &:active {
+        box-shadow: 6px 6px 10px var(--gray);
+    }
 }
 
 .settings {
